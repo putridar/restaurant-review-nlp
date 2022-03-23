@@ -1,4 +1,4 @@
-# sentiment
+# Restaurant Reviews Analysis with Sentiment Analysis and Topic Modelling
 
 ## Project setup
 ```
