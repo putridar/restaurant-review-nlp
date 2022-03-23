@@ -4,7 +4,7 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import numpy as np
-import scrape
+import scripts.scrape as scrape
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
