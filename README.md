@@ -1,24 +1,10 @@
 # Restaurant Reviews Analysis with Sentiment Analysis and Topic Modelling
 
 ## Project setup
-```
-npm install
-```
+1. Type ```git clone https://github.com/putridar/restaurant-review-nlp.git``` in your terminal/command prompt
+2. Type ```cd restaurant-review-nlp```
+3. Run ```pip install -r requirements.txt``` to install dependencies
+4. Run ```npm install```
+6. Run ```npm start```
 
-### Compiles and hot-reloads for development
-```
-npm start
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Navigate to http://localhost:8080/ to see the result

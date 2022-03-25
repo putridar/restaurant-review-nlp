@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "concurrently \"python app.py\" \"npm run serve\""
+    "start": "concurrently \"python app.py\" \"npm run serve\" \"npm run format\"",
+    "format": "prettier --write"
   },
   "dependencies": {
     "axios": "^0.26.0",
