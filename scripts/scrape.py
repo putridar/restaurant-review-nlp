@@ -104,62 +104,15 @@ def process_text(text):
 def clean_text(df):
     df['review_splitted'] = df['text'].apply(sent_tokenize)
     df['cleaned'] = df['review_splitted'].apply(lambda reviews: [process_text(sentence) for sentence in reviews])
+    # clean the full text
+    df['cleaned_text'] = df['text'].apply(lambda review: process_text(review))
     return df
-
-def is_positive(sentence):
-    # Means positive sentiment if compound score greater than 0 (can tweak this threshold)
-    return sia.polarity_scores(sentence)["compound"] > 0 
-
-def polarity_score_list(lst, positive_reviews, negative_reviews, positive_reviews_bigram, negative_reviews_bigram):
-    result = []
-
-    for sent in lst:
-        if (is_positive(sent) and sent):
-            result.append("Positive")
-            positive_reviews.extend(nltk.word_tokenize(sent))
-            positive_reviews_bigram.extend(nltk.bigrams(nltk.word_tokenize(sent)))
-        elif (sent):
-            result.append("Negative")
-            negative_reviews.extend(nltk.word_tokenize(sent))
-            negative_reviews_bigram.extend(nltk.bigrams(nltk.word_tokenize(sent)))
-        else:
-            result.append([])
-    return result,  positive_reviews, negative_reviews, positive_reviews_bigram, negative_reviews_bigram
-
-def get_sentiment(df):
-    positive_reviews = []
-    negative_reviews = []
-
-    positive_reviews_bigram = []
-    negative_reviews_bigram = []
-    
-    df_review = pd.DataFrame()
-    df_review["Text"] = df["text"]
-    df_review["Review"] = df["cleaned"]
-    df_review["Sentiment"] = df["cleaned"]
-    df_review["Sentiment"] = df_review["Sentiment"].apply(lambda x: polarity_score_list(x, positive_reviews, negative_reviews, positive_reviews_bigram, negative_reviews_bigram)[0])
-    return df_review, positive_reviews, negative_reviews, positive_reviews_bigram, negative_reviews_bigram
-
-def get_top(positive_reviews, negative_reviews):
-    positive_fd = nltk.FreqDist(positive_reviews)
-    negative_fd = nltk.FreqDist(negative_reviews)
-
-    common_set = set(positive_fd).intersection(negative_fd) # Remove common set
-
-    for word in common_set:
-        del positive_fd[word]
-        del negative_fd[word]
-    top_5_positive = {word for word, count in positive_fd.most_common(5)}
-    top_5_negative = {word for word, count in negative_fd.most_common(5)}
-    return top_5_positive, top_5_negative
 
 def run(name):
     links = scrape(name + " singapore food review")
     df = get_text(links)
     df = clean_text(df)
-    df, pos, neg, pos_bi, neg_bi = get_sentiment(df)
-    pos, neg = get_top(pos, neg)
-    return pos, neg
+    return df
     
 
 

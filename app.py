@@ -4,7 +4,7 @@ from flask import Flask
 from flask_restful import Resource, Api, reqparse
 from flask_cors import CORS
 import numpy as np
-import scripts.scrape as scrape
+import scripts.wordcount as wordcount
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -16,10 +16,10 @@ def get_result():
     result = ''
     if request.method == 'POST':
         name = request.get_json().get('name')
-        result = scrape.run(name)
+        result = wordcount.get_wordcount(name)
     else:
         result = request.args.get('name')
-    return jsonify(str(result))
+    return jsonify(result)
 
 if __name__ == "__main__":
   app.run(debug=True)
