@@ -16,7 +16,7 @@ export default new Router({
       props: true,
     },
     {
-      path: '/result',
+      path: '/sentiment-result',
       name: 'Sentiment',
       component: Sentiment,
       props: true,

@@ -7,12 +7,12 @@ export default {
       labels: ['January', 'February'],
       datasets: [
         {
-          label: 'Data One',
+          label: 'Data 1',
           backgroundColor: '#f87979',
           data: [40, 30],
         },
         {
-          label: 'Data Two',
+          label: 'Data 2',
           backgroundColor: '#f87979',
           data: [30, 20],
         },

@@ -44,7 +44,7 @@ export default {
         font-style: normal;
         font-weight: bold;
         font-size: 44px;
-        line-height: 58px;
+        line-height: 50px;
         text-align: center;
         margin: 15px;
         margin-top: 30px;
@@ -54,7 +54,7 @@ export default {
         font-style: normal;
         font-weight: bold;
         font-size: 30px;
-        line-height: 58px;
+        line-height: 50px;
         text-align: center;
         margin: 15px;
     }
@@ -63,7 +63,7 @@ export default {
         font-style: normal;
         font-weight: bold;
         font-size: 28px;
-        line-height: 58px;
+        line-height: 50px;
         text-align: center;
         margin: 15px;
     }

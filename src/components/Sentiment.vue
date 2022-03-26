@@ -16,7 +16,6 @@
       <button class = "submit" v-on:click="navigate()">Try other restaurants!</button>
     </div>
     <div class="right">
-      <p>{{this.result}}</p>
       <Chart></Chart>
     </div>
   </div>
