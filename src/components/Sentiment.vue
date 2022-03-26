@@ -2,7 +2,7 @@
   <div class="bg">
     <div class="left">
       <p class="name">{{this.name}}</p><br><br>
-      <p> Wordcloud </p>
+      <p> Frequent Words: </p>
       <vue-word-cloud
       style="height: 30vh; width: 30vw"
       :words="ws"
@@ -17,6 +17,7 @@
     </div>
     <div class="right">
       <p>{{this.result}}</p>
+      <Chart></Chart>
     </div>
   </div>
 </template>
@@ -24,12 +25,14 @@
 <script>
 import axios from 'axios';
 import VueWordCloud from 'vuewordcloud';
+import Chart from './SentimentChart';
 
 export default {
   name: 'Sentiment',
   props: ['name'],
   components: {
     [VueWordCloud.name]: VueWordCloud,
+    Chart,
   },
   data() {
     return {
