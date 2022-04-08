@@ -12,7 +12,9 @@ from flask import Flask, jsonify, request
 import scrape
 import sentiment_analysis as sentiment
 import topic_model as topic
-import pandas as pd
+import joblib
+
+model = joblib.load('use_bert_topic.pkl')
 
 import nltk
 nltk.download('stopwords')
@@ -34,19 +36,19 @@ def get_result():
         name = request.get_json().get('name')
         # get dataframe that contains reviews from google
         df = scrape.run(name)
+        # get wordcount
         wc = wordcount.get_wordcount(df)
-        final_result = {0: {'Food and Beverage': 0, 'Place': 0, 'Price': 0, 'Service': 7}, 1: {'Food and Beverage': 2, 'Place': 0, 'Price': 3, 'Service': 0}}
-        # sa = sentiment.get_sentiment(df)
-        sa = scrape.run_analysis(df)
-        # tm = topic.predict_topic(df, model)
-        # print('Topic modelling - done')
-        # tm = tm['Topic'].to_list()
-        # final = tm.groupby(['Sentiment','Topic']).count().reset_index().sort_values(by='Topic')
-        # final_result = {0:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}, 1:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}}
-        # for x in range(len(final)):
-        #     curr = final.iloc[x]
-        #     final_result[curr['Sentiment']][curr['Topic']] = curr['Sentence']
-        result = {'wordcount': wc, 'result': sa}
+        # get sentiment analysis and topic modelling result
+        sa = sentiment.get_sentiment(df)
+        print('Sentiment Analysis - done')
+        tm = topic.predict_topic(sa, model)
+        print('Topic modelling - done')
+        # aggregate result
+        final_result = {0:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}, 1:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}}
+        for x in tm:
+            curr = tm[x]
+            final_result[curr[0]][curr[1]] += 1
+        result = {'wordcount': wc, 'result': final_result}
     else:
         result = request.args.get('name')
     return jsonify(result)
