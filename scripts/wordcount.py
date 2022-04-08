@@ -7,21 +7,12 @@ from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 
 import nltk
-nltk.download('stopwords')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-nltk.download('vader_lexicon')
-nltk.download('brown')
-nltk.download('punkt')
-nltk.download('omw-1.4')
-
 from nltk import sent_tokenize
 from nltk.tokenize import word_tokenize
 
 from string import punctuation
 from nltk.stem import WordNetLemmatizer 
 from nltk.corpus import stopwords
-import scripts.scrape as scrape
 
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
@@ -29,9 +20,7 @@ lemmatizer = WordNetLemmatizer()
 from nltk.sentiment import SentimentIntensityAnalyzer
 sia = SentimentIntensityAnalyzer()
 
-def get_wordcount(name):
-    # get dataframe that contains reviews from google
-    df = scrape.run(name)
+def get_wordcount(df):
     # For wordcloud
     wordLst = [] # for unigram
     wordLstBigram = [] # for bigram

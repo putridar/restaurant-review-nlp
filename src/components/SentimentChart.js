@@ -2,36 +2,47 @@ import { Bar } from 'vue-chartjs';
 
 export default {
   extends: Bar,
-  data: () => ({
-    chartdata: {
-      labels: ['January', 'February'],
-      datasets: [
-        {
-          label: 'Data 1',
-          backgroundColor: '#f87979',
-          data: [40, 30],
-        },
-        {
-          label: 'Data 2',
-          backgroundColor: '#f87979',
-          data: [30, 20],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true,
-          },
-        }],
-      },
-    },
-  }),
-
+  props: ['data', 'options'],
   mounted() {
-    this.renderChart(this.chartdata, this.options);
+    this.renderLineChart();
+  },
+  computed: {
+    chartData() {
+      return this.data;
+    },
+  },
+  methods: {
+    renderLineChart() {
+      this.renderChart(
+        {
+          labels: [
+            'Food and Beverage',
+            'Place',
+            'Price',
+            'Service',
+          ],
+          datasets: [
+            {
+              label: 'Positive',
+              backgroundColor: '#1F335C',
+              data: this.chartData.slice(0, 4),
+            },
+            {
+              label: 'Negative',
+              backgroundColor: '#FCA311',
+              data: this.chartData.slice(4),
+            },
+          ],
+        },
+        { responsive: true, maintainAspectRatio: false },
+      );
+    },
+  },
+  watch: {
+    data() {
+      // this._chart.destroy();
+      // this.renderChart(this.data, this.options);
+      this.renderLineChart();
+    },
   },
 };

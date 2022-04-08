@@ -4,6 +4,9 @@ import pandas as pd
 from requests_html import HTML
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
+from transformers import pipeline, AutoTokenizer
+from transformers import AutoModelForTokenClassification, AutoModelForSequenceClassification
+from transformers import AutoConfig
 
 import nltk
 nltk.download('stopwords')
@@ -20,6 +23,11 @@ from nltk.tokenize import word_tokenize
 from string import punctuation
 from nltk.stem import WordNetLemmatizer 
 from nltk.corpus import stopwords
+import sentiment_analysis as sentiment
+import topic_model as topic
+import joblib
+
+model = joblib.load('use_bert_topic.pkl')
 
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
@@ -113,6 +121,67 @@ def run(name):
     df = get_text(links)
     df = clean_text(df)
     return df
+
+def sentiment_analysis(sentence):
+  
+    finetuned_model = "potatobunny/results-bm"  # from huggingface repo
+    tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', config=AutoConfig.from_pretrained(finetuned_model), padding=True, truncation=True)
+    model = AutoModelForSequenceClassification.from_pretrained(finetuned_model)
+    classifier = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+    results = classifier(sentence)
+    return results
+
+def get_sentiment(df):
+    map_label = {'LABEL_1': 1, 'LABEL_0': 0}
+
+    # df = df.drop_duplicates().dropna()
+    sentences = df['cleaned'].drop_duplicates().dropna().to_list()
+    full_sentence = []
+    for x in sentences:
+        full_sentence.extend(x)
+
+    full_sentence = [x for x in full_sentence if (x != '')]
+    # df['Sentence'] = full_sentence
+    res = sentiment_analysis(full_sentence)
+    final = {}
+    for x in range(len(full_sentence)):
+      final[full_sentence[x]] = [map_label[res[x]['label']]]
+    # final_df['Sentiment'] = res
+    # final_df['Sentiment'] = final_df['Sentiment'].apply(lambda x: map_label[x['label']])
+    return final
+
+# phrases is the dataframe that is after sentiment analysis
+# Topic 0 : place
+# Topic 1 : fnb
+# Topic 2 : price
+# Topic 3 : service
+def predict_topic(sentences, model):
+    lst_topics = {}
+    for i in sentences:
+        idx = model.find_topics(i, top_n = 1)[0][0]
+        topics = ''
+        if idx in [1,4,5,8,9]:
+            topics = "Food and Beverage"
+        elif (idx == 0) or (idx == 2):
+            topics = "Place"
+        elif idx == 6:
+            topics = "Service"
+        else:
+            topics = "Price"
+        lst_topics[i] = [sentences[i][0], topics]
+    return lst_topics
+
+def run_analysis(df):
+    sa = get_sentiment(df)
+    print('Sentiment Analysis - done')
+    tm = predict_topic(sa, model)
+    print('Topic modelling - done')
+    final_result = {0:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}, 1:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}}
+    for x in tm:
+        curr = tm[x]
+    #     # print(curr[0])
+        final_result[curr[0]][curr[1]] += 1
+    return final_result
     
 
 

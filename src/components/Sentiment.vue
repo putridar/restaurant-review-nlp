@@ -3,20 +3,33 @@
     <div class="left">
       <p class="name">{{this.name}}</p><br><br>
       <p> Frequent Words: </p>
+      <p> {{this.loading}} </p>
       <vue-word-cloud
       style="height: 30vh; width: 30vw"
       :words="ws"
-    >
-      <template slot-scope="{ text, weight, word }">
-        <div :title="weight" style="cursor: pointer" @click="onWordClick(word)">
-          {{ text }}
-        </div>
-      </template></vue-word-cloud
-    >
+    > </vue-word-cloud>
       <button class = "submit" v-on:click="navigate()">Try other restaurants!</button>
     </div>
     <div class="right">
-      <Chart></Chart>
+      <div v-if="this.chartdata.length !== 0">
+        <Chart :styles="chart" :data="chartdata"></Chart>
+      </div>
+      <div class="positive">
+        <p> Top 5 Most Positive Words: </p>
+        <ul>
+          <li v-for="(item,index) in words[0]" :key="index" class="lipos">
+            {{ item }}
+          </li>
+        </ul>
+      </div>
+      <div class="negative">
+        <p> Top 5 Most Negative Words: </p>
+        <ul>
+          <li v-for="(item,index) in words[1]" :key="index" class="lineg">
+            {{ item }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -37,6 +50,9 @@ export default {
     return {
       result: [],
       ws: [],
+      words: [['food', 'service', 'good', 'staff', 'fast'], ['spicy', 'far', 'pricey', 'hour', 'dirty']],
+      loading: 'Loading...',
+      chartdata: [0, 0, 0, 0, 0, 0, 0, 0],
     };
   },
   methods: {
@@ -45,7 +61,9 @@ export default {
       axios.post(path, { name: this.name })
         .then((res) => {
           this.result = res.data;
-          const r = this.result.map((e) => {
+          const resultPos = this.result.result[1];
+          const resultNeg = this.result.result[0];
+          const r = this.result.wordcount.map((e) => {
             let stdRot = 0;
             if (e[1] > 20) {
               stdRot = 0;
@@ -66,6 +84,17 @@ export default {
             };
           });
           this.ws = r;
+          this.loading = '';
+          this.chartdata = [
+            resultPos['Food and Beverage'],
+            resultPos.Place,
+            resultPos.Price,
+            resultPos.Service,
+            resultNeg['Food and Beverage'],
+            resultNeg.Place,
+            resultNeg.Price,
+            resultNeg.Service,
+          ];
         })
         .catch((error) => {
           // eslint-disable-next-line
@@ -76,9 +105,6 @@ export default {
       this.$router.push({
         name: 'Input',
       });
-    },
-    onWordClick(text) {
-      alert(text.text);
     },
     random_color() {
       const colorPalette = [
@@ -129,7 +155,9 @@ export default {
       margin-left: 37vw;
       background: #e5e5e5;
       width: 55vw;
+      margin-top: 5vh;
       border-radius: 8px;
+      height: 60vh;
     }
     .submit {
         background: #FCA311;
@@ -146,5 +174,50 @@ export default {
         margin: 5vh;
         cursor: pointer;
         transition-duration: 0.4s;
+        margin-top: 8vh;
+    }
+    .chart {
+      height: 20vh;
+      position: relative;
+    }
+    .positive {
+      margin-left: 5vw;
+    }
+    .negative {
+      margin-left: 5vw;
+    }
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      list-style-type: none;
+      padding: 0;
+      justify-content: center;
+    }
+    .lipos {
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align: center;
+      padding: 3vh;
+      margin: 2vh;
+      border-radius: 10px;
+      background-color: #1F335C;
+      color: white;
+      line-height: 0.5vh;
+      width: 3.5vw;
+      margin-top: 0vh;
+    }
+    .lineg {
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      text-align: center;
+      padding: 3vh;
+      margin: 2vh;
+      border-radius: 10px;
+      background-color: #FCA311;
+      line-height: 0.5vh;
+      width: 3.5vw;
+      margin-top: 0vh;
     }
 </style>
