@@ -11,24 +11,35 @@
       <button class = "submit" v-on:click="navigate()">Try other restaurants!</button>
     </div>
     <div class="right">
-      <div v-if="this.chartdata.length !== 0">
+      <div v-if="this.chartdata.length !== 0" class="chartbg">
         <Chart :styles="chart" :data="chartdata"></Chart>
       </div>
-      <div class="positive">
-        <p> Top 5 Most Positive Words: </p>
-        <ul>
-          <li v-for="(item,index) in words[0]" :key="index" class="lipos">
-            {{ item }}
-          </li>
-        </ul>
+      <div class="filter">
+        <div class="filtertitle"> Choose topic: </div>
+        <select id = "topic" v-model = "topic" class="dropdown">
+          <option value = "Food and Beverage" > Food and Beverage </option>
+          <option value = "Place"> Place </option>
+          <option value = "Price"> Price </option>
+          <option value = "Service"> Service </option>
+        </select>
       </div>
-      <div class="negative">
-        <p> Top 5 Most Negative Words: </p>
-        <ul>
-          <li v-for="(item,index) in words[1]" :key="index" class="lineg">
-            {{ item }}
-          </li>
-        </ul>
+      <div class="top">
+        <div class="positive" v-if="topic !== ''">
+          <p> Top 3 Most Positive Sentences: </p>
+          <ul>
+            <li v-for="(item,index) in this.sentences[this.topic][0]" :key="index" class="lipos">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
+        <div class="negative" v-if="topic !== ''">
+          <p> Top 3 Most Negative Sentences: </p>
+          <ul>
+            <li v-for="(item,index) in this.sentences[this.topic][1]" :key="index" class="lineg">
+              {{ item }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -49,10 +60,11 @@ export default {
   data() {
     return {
       result: [],
+      topic: '',
       ws: [],
-      words: [['food', 'service', 'good', 'staff', 'fast'], ['spicy', 'far', 'pricey', 'hour', 'dirty']],
       loading: 'Loading...',
       chartdata: [0, 0, 0, 0, 0, 0, 0, 0],
+      sentences: {},
     };
   },
   methods: {
@@ -61,6 +73,7 @@ export default {
       axios.post(path, { name: this.name })
         .then((res) => {
           this.result = res.data;
+          this.sentences = this.result.sentence;
           const resultPos = this.result.result[1];
           const resultNeg = this.result.result[0];
           const r = this.result.wordcount.map((e) => {
@@ -153,7 +166,6 @@ export default {
     }
     .right {
       margin-left: 37vw;
-      background: #e5e5e5;
       width: 55vw;
       margin-top: 5vh;
       border-radius: 8px;
@@ -180,6 +192,11 @@ export default {
       height: 20vh;
       position: relative;
     }
+    .chartbg {
+      background: #e5e5e5;
+      border-radius: 8px;
+      padding: 1vh;
+    }
     .positive {
       margin-left: 5vw;
     }
@@ -204,7 +221,7 @@ export default {
       background-color: #1F335C;
       color: white;
       line-height: 0.5vh;
-      width: 3.5vw;
+      width: 10vw;
       margin-top: 0vh;
     }
     .lineg {
@@ -217,7 +234,28 @@ export default {
       border-radius: 10px;
       background-color: #FCA311;
       line-height: 0.5vh;
-      width: 3.5vw;
+      width: 10vw;
       margin-top: 0vh;
+    }
+    .dropdown {
+      font-family: Inter;
+      width: 20vw;
+      height: 4vh;
+      border-radius: 5px;
+      margin-top: 2.5vh;
+    }
+    .filter {
+      display:flex;
+      justify-content:center;
+      text-align: center;
+    }
+    .filtertitle {
+      display:flex;
+      flex-direction:column;
+      margin-top: 3vh;
+      margin-right: 2vh;
+    }
+    .top {
+      display:flex;
     }
 </style>

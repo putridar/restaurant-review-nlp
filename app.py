@@ -45,10 +45,14 @@ def get_result():
         print('Topic modelling - done')
         # aggregate result
         final_result = {0:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}, 1:{'Food and Beverage': 0, 'Place': 0, 'Price':0, 'Service': 0}}
+        sentences = {
+            'Food and Beverage': [['food1', 'food2'], ['food3', 'food4']], 
+            'Place': [['place1', 'place2'], ['place3', 'place4']],
+        }
         for x in tm:
             curr = tm[x]
             final_result[curr[0]][curr[1]] += 1
-        result = {'wordcount': wc, 'result': final_result}
+        result = {'wordcount': wc, 'result': final_result, 'sentence': sentences}
     else:
         result = request.args.get('name')
     return jsonify(result)
