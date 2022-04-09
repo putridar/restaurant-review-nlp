@@ -54,7 +54,7 @@ def scrape(q):
     return links
 
 def filter_text(txt):
-    stop_words = ["inbox","©",":","=","@", "copyright", "cookies","..","\xa0","min","redirecting…","seconds…", "#", '()', "captcha",'redirect','anti-virus','malware','JavaScript','developer','technology','subscribe','learn more…','support us']
+    stop_words = ["inbox","©",":","=","@", "copyright", "cookies","..","\xa0","min","redirecting…","seconds…", "#", '()', "captcha",'redirect','anti-virus','malware','JavaScript','developer','technology','subscribe','learn more…','support us', 'articles', 'article', 'content', 'blog']
     if not txt or len(txt)<100:
         return False
     for x in stop_words:

@@ -27,7 +27,7 @@
         <div class="positive" v-if="topic !== ''">
           <p> Top 3 Most Positive Sentences: </p>
           <ul>
-            <li v-for="(item,index) in this.sentences[this.topic][0]" :key="index" class="lipos">
+            <li v-for="(item,index) in this.sentences[this.topic][1]" :key="index" class="lipos">
               {{ item }}
             </li>
           </ul>
@@ -35,7 +35,7 @@
         <div class="negative" v-if="topic !== ''">
           <p> Top 3 Most Negative Sentences: </p>
           <ul>
-            <li v-for="(item,index) in this.sentences[this.topic][1]" :key="index" class="lineg">
+            <li v-for="(item,index) in this.sentences[this.topic][0]" :key="index" class="lineg">
               {{ item }}
             </li>
           </ul>
@@ -73,7 +73,7 @@ export default {
       axios.post(path, { name: this.name })
         .then((res) => {
           this.result = res.data;
-          this.sentences = this.result.sentence;
+          this.get_top_3(this.result.sentence);
           const resultPos = this.result.result[1];
           const resultNeg = this.result.result[0];
           const r = this.result.wordcount.map((e) => {
@@ -118,6 +118,26 @@ export default {
       this.$router.push({
         name: 'Input',
       });
+    },
+    get_top_3(x) {
+      const top3 = {
+        'Food and Beverage': [],
+        Place: [],
+        Price: [],
+        Service: [],
+      };
+      for (const [key, value] of Object.entries(x)) {
+        for (let [sentiment, val] of Object.entries(value)) {
+          val = val.sort((a, b) => b.Score - a.Score);
+          let chosen = val.slice(0,3);
+          let sentence = [];
+          for (const id in chosen) {
+              sentence.push(chosen[id].Sentence);
+          }
+          top3[key].push(sentence);
+        }
+      }
+      this.sentences = top3;
     },
     random_color() {
       const colorPalette = [
@@ -220,8 +240,7 @@ export default {
       border-radius: 10px;
       background-color: #1F335C;
       color: white;
-      line-height: 0.5vh;
-      width: 10vw;
+      width: 20vw;
       margin-top: 0vh;
     }
     .lineg {
@@ -233,8 +252,7 @@ export default {
       margin: 2vh;
       border-radius: 10px;
       background-color: #FCA311;
-      line-height: 0.5vh;
-      width: 10vw;
+      width: 20vw;
       margin-top: 0vh;
     }
     .dropdown {

@@ -19,9 +19,15 @@ def get_sentiment(df):
     for x in sentences:
         full_sentence.extend(x)
 
+    whole_sentences = df['review_splitted'].drop_duplicates().dropna().to_list()
+    full_whole_sentence = []
+    for x in whole_sentences:
+      full_whole_sentence.extend(x)
+
     full_sentence = [x for x in full_sentence if (x != '')]
+    full_whole_sentence = [x for x in full_whole_sentence if (x != '')]
     res = sentiment_analysis(full_sentence)
     final = {}
     for x in range(len(full_sentence)):
-      final[full_sentence[x]] = [map_label[res[x]['label']]]
+      final[full_sentence[x]] = [map_label[res[x]['label']], full_whole_sentence[x], res[x]['score']] # final format
     return final

@@ -18,5 +18,5 @@ def predict_topic(sentences, model):
             topics = "Service"
         else:
             topics = "Price"
-        lst_topics[i] = [sentences[i][0], topics]
+        lst_topics[i] = [sentences[i][0], topics, sentences[i][1], sentences[i][2]] # [cleaned, topics, whole sentences, score]
     return lst_topics
