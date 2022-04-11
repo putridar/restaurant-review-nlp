@@ -1,20 +1,36 @@
 <template>
   <div class="bg">
-    <div class="left">
+    <div class="title">
+      <button class = "submit2" v-on:click="getMessage()">Refresh</button>
       <p class="name">{{this.name}}</p><br><br>
-      <p> Frequent Words: </p>
-      <p> {{this.loading}} </p>
-      <vue-word-cloud
-      style="height: 30vh; width: 30vw"
-      :words="ws"
-    > </vue-word-cloud>
       <button class = "submit" v-on:click="navigate()">Try other restaurants!</button>
     </div>
-    <div class="right">
-      <div v-if="this.chartdata.length !== 0" class="chartbg">
-        <Chart :styles="chart" :data="chartdata"></Chart>
+    <div class="top">
+      <div>
+      <div class="col1">
+        <div class="col">
+          <div class="num"> {{this.total}} </div><br>
+          <div class="txt"> Reviews </div>
+        </div>
+          <div class="col">
+          <div class="num">{{this.positive}}% </div><br>
+          <div class="txt"> Positive reviews </div>
+        </div>
       </div>
-      <div class="filter">
+      <p> Frequent Words: </p>
+        <p> {{this.loading}} </p>
+        <vue-word-cloud
+        style="height: 30vh; width: 40vw"
+        :words="ws"
+      > </vue-word-cloud>
+      </div>
+      <div class="col">
+        <div v-if="this.chartdata.length !== 0" class="chartbg">
+          <Chart :styles="chart" :data="chartdata"></Chart>
+        </div>
+      </div>
+    </div>
+    <div class="filter">
         <div class="filtertitle"> Choose topic: </div>
         <select id = "topic" v-model = "topic" class="dropdown">
           <option value = "Food and Beverage" > Food and Beverage </option>
@@ -23,9 +39,10 @@
           <option value = "Service"> Service </option>
         </select>
       </div>
-      <div class="top">
+    <div class="bottom">
+      <div>
         <div class="positive" v-if="topic !== ''">
-          <p> Top 3 Most Positive Sentences: </p>
+          <p> Top 3 Most Positive Reviews: </p>
           <ul>
             <li v-for="(item,index) in this.sentences[this.topic][1]" :key="index" class="lipos">
               {{ item }}
@@ -33,7 +50,7 @@
           </ul>
         </div>
         <div class="negative" v-if="topic !== ''">
-          <p> Top 3 Most Negative Sentences: </p>
+          <p> Top 3 Most Negative Reviews: </p>
           <ul>
             <li v-for="(item,index) in this.sentences[this.topic][0]" :key="index" class="lineg">
               {{ item }}
@@ -65,6 +82,8 @@ export default {
       loading: 'Loading...',
       chartdata: [0, 0, 0, 0, 0, 0, 0, 0],
       sentences: {},
+      total: 0,
+      positive: 0,
     };
   },
   methods: {
@@ -74,6 +93,8 @@ export default {
         .then((res) => {
           this.result = res.data;
           this.get_top_3(this.result.sentence);
+          this.total = this.result.total;
+          this.positive = Math.round(this.result.positive) / 100;
           const resultPos = this.result.result[1];
           const resultNeg = this.result.result[0];
           const r = this.result.wordcount.map((e) => {
@@ -129,10 +150,10 @@ export default {
       for (const [key, value] of Object.entries(x)) {
         for (let [sentiment, val] of Object.entries(value)) {
           val = val.sort((a, b) => b.Score - a.Score);
-          let chosen = val.slice(0,3);
-          let sentence = [];
+          const chosen = val.slice(0, 3);
+          const sentence = [];
           for (const id in chosen) {
-              sentence.push(chosen[id].Sentence);
+            sentence.push(chosen[id].Sentence);
           }
           top3[key].push(sentence);
         }
@@ -172,12 +193,19 @@ export default {
         font-family: Inter;
         font-style: normal;
         font-weight: bold;
-        font-size: 54px;
+        font-size: 60px;
         line-height: 58px;
         text-align: center;
         margin: 3vh;
-        margin-top: 7vh;
         color: #1F335C;
+        margin-bottom: 0vh;
+        margin-right: 8vw;
+        margin-left: 12vw;
+    }
+    .title {
+      display: flex;
+      justify-content:center;
+      text-align: center;
     }
     .left {
       float: left;
@@ -187,35 +215,60 @@ export default {
     .right {
       margin-left: 37vw;
       width: 55vw;
-      margin-top: 5vh;
+      margin-top: 0vh;
       border-radius: 8px;
       height: 60vh;
     }
+    .bottom {
+      display: flex;
+      justify-content:center;
+      text-align: center;
+    }
     .submit {
-        background: #FCA311;
-        border-radius: 8px;
-        border-color: #FCA311;
-        font-family: Inter;
-        font-style: normal;
-        font-weight: bold;
-        font-size: 24px;
-        line-height: 5vh;
-        text-align: center;
-        width: 25vw;
-        height: 12vh;
-        margin: 5vh;
-        cursor: pointer;
-        transition-duration: 0.4s;
-        margin-top: 8vh;
+      background: #FCA311;
+      border-radius: 8px;
+      border-color: #FCA311;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 22px;
+      line-height: 4vh;
+      text-align: center;
+      width: 20vw;
+      height: 10vh;
+      margin: 5vh;
+      cursor: pointer;
+      transition-duration: 0.4s;
+      margin-top: 2.5vh;
+    }
+    .submit2 {
+      background: #FCA311;
+      border-radius: 8px;
+      border-color: #FCA311;
+      font-family: Inter;
+      font-style: normal;
+      font-weight: bold;
+      font-size: 22px;
+      line-height: 4vh;
+      text-align: center;
+      width: 15vw;
+      height: 10vh;
+      margin: 5vh;
+      margin-left: 8vh;
+      cursor: pointer;
+      transition-duration: 0.4s;
+      margin-top: 2.5vh;
     }
     .chart {
       height: 20vh;
       position: relative;
+      width: 35vw;
     }
     .chartbg {
       background: #e5e5e5;
       border-radius: 8px;
       padding: 1vh;
+      width: 35vw;
     }
     .positive {
       margin-left: 5vw;
@@ -240,7 +293,7 @@ export default {
       border-radius: 10px;
       background-color: #1F335C;
       color: white;
-      width: 20vw;
+      width: 60vw;
       margin-top: 0vh;
     }
     .lineg {
@@ -252,7 +305,7 @@ export default {
       margin: 2vh;
       border-radius: 10px;
       background-color: #FCA311;
-      width: 20vw;
+      width: 60vw;
       margin-top: 0vh;
     }
     .dropdown {
@@ -260,7 +313,6 @@ export default {
       width: 20vw;
       height: 4vh;
       border-radius: 5px;
-      margin-top: 2.5vh;
     }
     .filter {
       display:flex;
@@ -270,10 +322,26 @@ export default {
     .filtertitle {
       display:flex;
       flex-direction:column;
-      margin-top: 3vh;
       margin-right: 2vh;
     }
     .top {
       display:flex;
+      justify-content:center;
+      text-align: center;
+    }
+    .col1 {
+      display:flex;
+      justify-content:center;
+      text-align: center;
+    }
+    .col {
+      margin: 3vw;
+      margin-top: 2vh;
+    }
+    .num {
+      font-size: 9vh;
+    }
+    .txt {
+      font-size: 3vh;
     }
 </style>
