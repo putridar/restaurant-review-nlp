@@ -14,4 +14,4 @@ If error persist, stop the program (Ctrl + C) and run ```npm start --fix``` agai
 
 Navigate to http://localhost:8080/ to see the result
 
-Note: Use Python 3.7.x to run, and it might take a while to run (2-3 minutes). If the result does not appear after more than 5 minutes, click the refresh button
+Note: Use Python 3.7.x to run, and it might take a while to run (2-3 minutes). If the result does not appear after more than 5 minutes, click the refresh button and wait for 3 minutes
