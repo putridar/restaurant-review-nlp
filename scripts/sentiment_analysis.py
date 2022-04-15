@@ -4,7 +4,7 @@ from transformers import AutoConfig
 
 def sentiment_analysis(sentence):
   
-    finetuned_model = "potatobunny/results-bm"  # from huggingface repo
+    finetuned_model = "potatobunny/results-yelp"  # from huggingface repo
     tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased', config=AutoConfig.from_pretrained(finetuned_model), padding=True, truncation=True)
     model = AutoModelForSequenceClassification.from_pretrained(finetuned_model)
     classifier = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)

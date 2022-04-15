@@ -1,10 +1,5 @@
 from bertopic import BERTopic
 
-# phrases is the dataframe that is after sentiment analysis
-# Topic 0 : place
-# Topic 1 : fnb
-# Topic 2 : price
-# Topic 3 : service
 def predict_topic(sentences, model):
     lst_topics = {}
     for i in sentences:
